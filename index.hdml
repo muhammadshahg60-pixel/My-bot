@@ -1,332 +1,249 @@
-<!DOCTYPE html>
-<html lang="ur" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محمود ریسرچرز - AI اسسٹنٹ</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+This quickstart shows you how to install our [libraries](https://ai.google.dev/gemini-api/docs/libraries)
+and make your first Gemini API request.
 
-    <style>
-        /* --- 1. بنیادی ڈیزائن (CSS) --- */
-        :root {
-            --primary-color: #0f2027; /* گہرا نیلا */
-            --secondary-color: #203a43;
-            --accent-color: #d4af37; /* سنہری (Gold) */
-            --text-color: #ffffff;
-            --glass-bg: rgba(255, 255, 255, 0.1);
+## Before you begin
+
+Using the Gemini API requires an API key, you can create one for free to get started.
+
+[Create a Gemini API Key](https://aistudio.google.com/app/apikey)
+
+## Install the Google GenAI SDK
+
+### Python
+
+Using [Python 3.9+](https://www.python.org/downloads/), install the
+[`google-genai` package](https://pypi.org/project/google-genai/)
+using the following
+[pip command](https://packaging.python.org/en/latest/tutorials/installing-packages/):  
+
+    pip install -q -U google-genai
+
+### JavaScript
+
+Using [Node.js v18+](https://nodejs.org/en/download/package-manager),
+install the
+[Google Gen AI SDK for TypeScript and JavaScript](https://www.npmjs.com/package/@google/genai)
+using the following
+[npm command](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm):  
+
+    npm install @google/genai
+
+### Go
+
+Install
+[google.golang.org/genai](https://pkg.go.dev/google.golang.org/genai) in
+your module directory using the [go get command](https://go.dev/doc/code):  
+
+    go get google.golang.org/genai
+
+### Java
+
+If you're using Maven, you can install
+[google-genai](https://github.com/googleapis/java-genai) by adding the
+following to your dependencies:  
+
+    <dependencies>
+      <dependency>
+        <groupId>com.google.genai</groupId>
+        <artifactId>google-genai</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+    </dependencies>
+
+### C#
+
+Install
+[googleapis/go-genai](https://googleapis.github.io/dotnet-genai/) in
+your module directory using the [dotnet add command](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-package-add)  
+
+    dotnet add package Google.GenAI
+
+### Apps Script
+
+1. To create a new Apps Script project, go to [script.new](https://script.google.com/u/0/home/projects/create).
+2. Click **Untitled project**.
+3. Rename the Apps Script project **AI Studio** and click **Rename**.
+4. Set your [API key](https://developers.google.com/apps-script/guides/properties#manage_script_properties_manually)
+   1. At the left, click **Project Settings** ![The icon for project settings](https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/settings/default/24px.svg).
+   2. Under **Script Properties** click **Add script property**.
+   3. For **Property** , enter the key name: `GEMINI_API_KEY`.
+   4. For **Value**, enter the value for the API key.
+   5. Click **Save script properties**.
+5. Replace the `Code.gs` file contents with the following code:
+
+## Make your first request
+
+Here is an example that uses the
+[`generateContent`](https://ai.google.dev/api/generate-content#method:-models.generatecontent) method
+to send a request to the Gemini API using the Gemini 2.5 Flash model.
+
+If you [set your API key](https://ai.google.dev/gemini-api/docs/api-key#set-api-env-var) as the
+environment variable `GEMINI_API_KEY`, it will be picked up automatically by the
+client when using the [Gemini API libraries](https://ai.google.dev/gemini-api/docs/libraries).
+Otherwise you will need to [pass your API key](https://ai.google.dev/gemini-api/docs/api-key#provide-api-key-explicitly) as
+an argument when initializing the client.
+
+Note that all code samples in the Gemini API docs assume that you have set the
+environment variable `GEMINI_API_KEY`.  
+
+### Python
+
+    from google import genai
+
+    # The client gets the API key from the environment variable `GEMINI_API_KEY`.
+    client = genai.Client()
+
+    response = client.models.generate_content(
+        model="gemini-3-flash-preview", contents="Explain how AI works in a few words"
+    )
+    print(response.text)
+
+### JavaScript
+
+    import { GoogleGenAI } from "@google/genai";
+
+    // The client gets the API key from the environment variable `GEMINI_API_KEY`.
+    const ai = new GoogleGenAI({});
+
+    async function main() {
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: "Explain how AI works in a few words",
+      });
+      console.log(response.text);
+    }
+
+    main();
+
+### Go
+
+    package main
+
+    import (
+        "context"
+        "fmt"
+        "log"
+        "google.golang.org/genai"
+    )
+
+    func main() {
+        ctx := context.Background()
+        // The client gets the API key from the environment variable `GEMINI_API_KEY`.
+        client, err := genai.NewClient(ctx, nil)
+        if err != nil {
+            log.Fatal(err)
         }
 
-        body {
-            font-family: 'Roboto', 'Noto Nastaliq Urdu', serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), #2c5364);
-            color: var(--text-color);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        result, err := client.Models.GenerateContent(
+            ctx,
+            "gemini-3-flash-preview",
+            genai.Text("Explain how AI works in a few words"),
+            nil,
+        )
+        if err != nil {
+            log.Fatal(err)
         }
+        fmt.Println(result.Text())
+    }
 
-        /* --- لاگ ان اسکرین --- */
-        #login-screen {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            width: 90%;
-            max-width: 400px;
-            transition: transform 0.3s ease;
-        }
+### Java
 
-        #login-screen h1 {
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            font-size: 2em;
-        }
+    package com.example;
 
-        input[type="email"] {
-            width: 90%;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255, 255, 255, 0.9);
-            font-size: 16px;
-        }
+    import com.google.genai.Client;
+    import com.google.genai.types.GenerateContentResponse;
 
-        .btn-gold {
-            background: linear-gradient(45deg, #d4af37, #c5a028);
-            color: #000;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 15px;
-            width: 100%;
-            font-size: 1.1em;
-            transition: 0.3s;
-        }
+    public class GenerateTextFromTextInput {
+      public static void main(String[] args) {
+        // The client gets the API key from the environment variable `GEMINI_API_KEY`.
+        Client client = new Client();
 
-        .btn-gold:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--accent-color); }
+        GenerateContentResponse response =
+            client.models.generateContent(
+                "gemini-3-flash-preview",
+                "Explain how AI works in a few words",
+                null);
 
-        /* --- چیٹ انٹرفیس --- */
-        #chat-interface {
-            display: none; /* شروع میں چھپا ہوا */
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            background: rgba(0, 0, 0, 0.5);
-        }
+        System.out.println(response.text());
+      }
+    }
 
-        header {
-            background: rgba(15, 32, 39, 0.95);
-            padding: 15px;
-            text-align: center;
-            border-bottom: 2px solid var(--accent-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+### C#
 
-        header h2 { margin: 0; color: var(--accent-color); font-size: 1.5em; }
+    using System.Threading.Tasks;
+    using Google.GenAI;
+    using Google.GenAI.Types;
 
-        #chat-box {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+    public class GenerateContentSimpleText {
+      public static async Task main() {
+        // The client gets the API key from the environment variable `GEMINI_API_KEY`.
+        var client = new Client();
+        var response = await client.Models.GenerateContentAsync(
+          model: "gemini-3-flash-preview", contents: "Explain how AI works in a few words"
+        );
+        Console.WriteLine(response.Candidates[0].Content.Parts[0].Text);
+      }
+    }
 
-        /* پیغامات کا ڈیزائن */
-        .message {
-            max-width: 80%;
-            padding: 15px;
-            border-radius: 15px;
-            line-height: 1.6;
-            position: relative;
-            animation: fadeIn 0.3s ease;
-        }
+### Apps Script
 
-        .user-msg {
-            align-self: flex-start; /* اردو کی وجہ سے دائیں طرف */
-            background: linear-gradient(45deg, #2b5876, #4e4376);
-            border-bottom-right-radius: 2px;
-            color: white;
-        }
+    // See https://developers.google.com/apps-script/guides/properties
+    // for instructions on how to set the API key.
+    const apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+    function main() {
+      const payload = {
+        contents: [
+          {
+            parts: [
+              { text: 'Explain how AI works in a few words' },
+            ],
+          },
+        ],
+      };
 
-        .bot-msg {
-            align-self: flex-end; /* اردو کی وجہ سے بائیں طرف */
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 4px solid var(--accent-color);
-            border-bottom-left-radius: 2px;
-            text-align: right;
-        }
+      const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent';
+      const options = {
+        method: 'POST',
+        contentType: 'application/json',
+        headers: {
+          'x-goog-api-key': apiKey,
+        },
+        payload: JSON.stringify(payload)
+      };
 
-        .citation-box {
-            background: rgba(0,0,0,0.3);
-            font-size: 0.85em;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            border-right: 2px solid var(--accent-color);
-        }
+      const response = UrlFetchApp.fetch(url, options);
+      const data = JSON.parse(response);
+      const content = data['candidates'][0]['content']['parts'][0]['text'];
+      console.log(content);
+    }
 
-        .download-link {
-            display: inline-block;
-            margin-top: 10px;
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: bold;
-            border: 1px solid var(--accent-color);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
+### REST
 
-        /* ان پٹ ایریا */
-        .input-area {
-            padding: 15px;
-            background: rgba(15, 32, 39, 0.95);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+    curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent" \
+      -H "x-goog-api-key: $GEMINI_API_KEY" \
+      -H 'Content-Type: application/json' \
+      -X POST \
+      -d '{
+        "contents": [
+          {
+            "parts": [
+              {
+                "text": "Explain how AI works in a few words"
+              }
+            ]
+          }
+        ]
+      }'
 
-        textarea {
-            flex: 1;
-            padding: 15px;
-            border-radius: 25px;
-            border: none;
-            resize: none;
-            height: 50px;
-            background: #fff;
-            font-family: 'Noto Nastaliq Urdu', sans-serif;
-        }
+## What's next
 
-        .send-btn {
-            background: var(--accent-color);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            color: #000;
-            font-size: 1.2em;
-        }
+Now that you made your first API request, you might want to explore the
+following guides that show Gemini in action:
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* لوڈر */
-        .typing-indicator { font-style: italic; color: #aaa; font-size: 0.9em; margin-right: 10px; display: none;}
-    </style>
-</head>
-<body>
-
-    <div id="login-screen">
-        <div style="font-size: 3em; color: #d4af37; margin-bottom: 10px;">
-            <i class="fas fa-book-reader"></i>
-        </div>
-        <h1>محمود ریسرچرز</h1>
-        <p>لاگ ان کرنے کے لیے اپنی ای میل درج کریں</p>
-        <input type="email" id="emailInput" placeholder="آپ کی ای میل (user@example.com)">
-        <button class="btn-gold" onclick="login()">داخل ہوں</button>
-    </div>
-
-    <div id="chat-interface">
-        <header>
-            <button onclick="logout()" style="background:none; border:none; color:white;"><i class="fas fa-sign-out-alt"></i></button>
-            <h2>محمود ریسرچرز <i class="fas fa-feather-alt"></i></h2>
-            <div style="width: 20px;"></div>
-        </header>
-
-        <div id="chat-box">
-            <div class="message bot-msg">
-                السلام علیکم! میں <b>محمود ریسرچرز</b> ہوں۔<br>
-                میں جدید ترین ٹیکنالوجی اور مستند حوالوں کے ساتھ آپ کی خدمت میں حاضر ہوں۔ آج ہم کیا تحقیق کریں؟
-            </div>
-        </div>
-
-        <div class="typing-indicator" id="loader">محمود ریسرچرز تحقیق کر رہے ہیں...</div>
-
-        <div class="input-area">
-            <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-            <textarea id="userInput" placeholder="اپنا سوال یہاں لکھیں..." dir="auto"></textarea>
-        </div>
-    </div>
-
-    <script>
-        // --- 3. جاوا اسکرپٹ (دماغ) ---
-
-        // یہ وہ System Prompt ہے جو آپ نے دیا تھا
-        const SYSTEM_PROMPT = `
-        You are "Mehmood Researchers", an advanced AI research assistant.
-        Tone: Professional, simple, human-like.
-        Guidelines:
-        1. Comprehensive answers with citations.
-        2. Format references as [Source Name].
-        3. No limits on knowledge.
-        4. Always provide a Google Index Link/Download Link at the end.
-        5. Prioritize Urdu language.
-        `;
-
-        // لاگ ان فنکشن
-        function login() {
-            const email = document.getElementById('emailInput').value;
-            if (email.includes('@') && email.includes('.')) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('chat-interface').style.display = 'flex';
-                // ای میل کو یاد رکھیں (Session)
-                localStorage.setItem('userEmail', email);
-            } else {
-                alert("براہ کرم درست ای میل درج کریں۔");
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('userEmail');
-            location.reload();
-        }
-
-        // پیغام بھیجنے کا فنکشن
-        async function sendMessage() {
-            const inputField = document.getElementById('userInput');
-            const message = inputField.value.trim();
-            const chatBox = document.getElementById('chat-box');
-
-            if (message === "") return;
-
-            // 1. صارف کا پیغام دکھائیں
-            const userBubble = document.createElement('div');
-            userBubble.className = 'message user-msg';
-            userBubble.innerText = message;
-            chatBox.appendChild(userBubble);
-            
-            inputField.value = "";
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // لوڈر دکھائیں
-            document.getElementById('loader').style.display = 'block';
-
-            // 2. AI کا جواب (یہاں اصلی API کنیکٹ ہوگی)
-            // ابھی ہم "ڈیمو" کے طور پر ایک نقلی جواب بنائیں گے جو آپ کے فارمیٹ کو فالو کرے گا۔
-            
-            setTimeout(() => {
-                const responseHTML = generateMockResponse(message); // جب آپ API لگائیں گے تو اسے تبدیل کریں گے
-                
-                const botBubble = document.createElement('div');
-                botBubble.className = 'message bot-msg';
-                botBubble.innerHTML = responseHTML;
-                
-                document.getElementById('loader').style.display = 'none';
-                chatBox.appendChild(botBubble);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 2000); // 2 سیکنڈ کا انتظار تاکہ لگے کہ سوچ رہا ہے
-        }
-
-        // --- یہ فنکشن آپ کے مطلوبہ فارمیٹ میں جواب تیار کرتا ہے ---
-        function generateMockResponse(query) {
-            // نوٹ: جب آپ OpenAI/Gemini API لگائیں گے، تو یہ فنکشن اصلی ڈیٹا لائے گا۔
-            // فی الحال یہ ایک ڈیمو جواب ہے تاکہ آپ ڈیزائن چیک کر سکیں۔
-            
-            return `
-                <strong>سوال:</strong> ${query}<br><br>
-                <strong>تفصیلی جواب:</strong><br>
-                آپ کے سوال پر تحقیق کرنے کے بعد، مستند ذرائع یہ بتاتے ہیں کہ یہ موضوع انتہائی اہمیت کا حامل ہے۔ اسلامی اور سائنسی نقطہ نظر سے اس کے کئی پہلو ہیں۔<br>
-                جدید سائنس بھی اس بات کی تائید کرتی ہے کہ کائنات کا نظام ایک خاص توازن پر قائم ہے۔<br><br>
-                
-                <div class="citation-box">
-                    <strong>حوالہ جات:</strong>
-                    <ul>
-                        <li>قرآن مجید، سورۃ الرحمٰن [آیت 7]</li>
-                        <li>صحیح بخاری، حدیث نمبر 102</li>
-                        <li>انسائیکلوپیڈیا بریٹانیکا (2024 ایڈیشن)</li>
-                    </ul>
-                </div>
-
-                <br>
-                <a href="https://www.google.com/search?q=${encodeURIComponent(query)}+filetype:pdf" target="_blank" class="download-link">
-                    <i class="fas fa-file-download"></i> ڈاؤنلوڈ سورس (Google Index)
-                </a>
-            `;
-        }
-
-        // اگر پہلے سے لاگ ان ہے تو چیک کریں
-        window.onload = function() {
-            if(localStorage.getItem('userEmail')) {
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('chat-interface').style.display = 'flex';
-            }
-        }
-    </script>
-
-</body>
-</html>
+- [Text generation](https://ai.google.dev/gemini-api/docs/text-generation)
+- [Image generation](https://ai.google.dev/gemini-api/docs/image-generation)
+- [Image understanding](https://ai.google.dev/gemini-api/docs/image-understanding)
+- [Thinking](https://ai.google.dev/gemini-api/docs/thinking)
+- [Function calling](https://ai.google.dev/gemini-api/docs/function-calling)
+- [Long context](https://ai.google.dev/gemini-api/docs/long-context)
+- [Embeddings](https://ai.google.dev/gemini-api/docs/embeddings)
